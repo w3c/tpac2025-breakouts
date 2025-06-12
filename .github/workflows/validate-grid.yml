@@ -1,0 +1,41 @@
+name: "[M] Validate all sessions"
+
+on:
+  workflow_dispatch:
+    inputs:
+      validation:
+        description: 'Validate only scheduling conflicts (default) or re-validate all sessions'
+        required: true
+        default: 'scheduling'
+        type: choice
+        options:
+          - scheduling
+          - everything
+
+jobs:
+  validate-grid:
+    name: Validate session grid
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Checkout latest version of release script
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      # Note: no "package-lock.json" and no "npm ci" on purpose to retrieve
+      # latest version of w3c/tpac-breakouts tools (which are unversioned)
+      - name: Install dependencies
+        run: npm install
+
+      - name: Validate grid and update project fields
+        run: npx tpac-breakouts validate all --what ${{ inputs.validation }}
+        env:
+          # A valid Personal Access Token (classic version) with project
+          # and public_repo scope.
+          GRAPHQL_TOKEN: ${{ secrets.GRAPHQL_TOKEN }}
+          GH_TOKEN: ${{ secrets.GRAPHQL_TOKEN }}

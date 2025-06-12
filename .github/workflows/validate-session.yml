@@ -1,0 +1,79 @@
+name: "[A] Validate session and update W3C calendar"
+
+on:
+  issues:
+    # Details for types below can be found at:
+    # https://docs.github.com/en/webhooks-and-events/webhooks/webhook-events-and-payloads?actionType=edited#issues
+    types:
+      # Job triggered when an issue is created or re-opened
+      - opened
+      - reopened
+
+      # or gets "edited" (title or body updated)
+      - edited
+
+jobs:
+  validate-session:
+    name: Validate session and update W3C calendar
+    runs-on: ubuntu-latest
+    # We're only interested in "session" issues
+    # and don't want to react to edits made by the bot as a consequence of
+    # a previous run of this job
+    if: ${{ !endsWith(github.actor, '-bot') && contains(github.event.issue.labels.*.name, 'session') }}
+    steps:
+      # Starting with Ubuntu 23+, a security feature prevents running Puppeteer
+      # by default. It needs to be disabled. Using the "easiest" option, see:
+      # https://chromium.googlesource.com/chromium/src/+/main/docs/security/apparmor-userns-restrictions.md
+      # https://github.com/puppeteer/puppeteer/pull/13196/files
+      - name: Disable AppArmor
+        run: echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
+
+      - name: Setup node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Checkout latest version of release script
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      # Note: no "package-lock.json" and no "npm ci" on purpose to retrieve
+      # latest version of w3c/tpac-breakouts tools (which are unversioned)
+      - name: Install dependencies
+        run: npm install
+
+      - name: Add thank you comment with links to documentation
+        if: ${{ github.event.action == 'opened' }}
+        run: gh issue comment "$NUMBER" --body-file "$BODY_FILE"
+        env:
+          GH_TOKEN: ${{ secrets.GRAPHQL_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.issue.number }}
+          BODY_FILE: .github/session-created.md
+
+      - name: Dump changes to local file
+        run: echo '${{ toJSON(github.event.issue.changes || '{}') }}' > changes.json
+        shell: bash
+
+      - name: Validate session and update issue labels accordingly
+        run: npx tpac-breakouts validate ${{ github.event.issue.number }} --changes changes.json --what everything
+        env:
+          # Same valid Personal Access Token (classic version) as above, with
+          # project and public_repo scope.
+          GRAPHQL_TOKEN: ${{ secrets.GRAPHQL_TOKEN }}
+          GH_TOKEN: ${{ secrets.GRAPHQL_TOKEN }}
+
+      - name: Create/Update calendar entry
+        run: npx tpac-breakouts sync-calendar ${{ github.event.issue.number }} --quiet
+        env:
+          # Same valid Personal Access Token (classic version) as above, with
+          # project and public_repo scope.
+          GRAPHQL_TOKEN: ${{ secrets.GRAPHQL_TOKEN }}
+          GH_TOKEN: ${{ secrets.GRAPHQL_TOKEN }}
+
+          # Information about the team user on behalf of which the updates to
+          # the calendar will be made. The password must obviously be stored
+          # as a secret!
+          W3C_LOGIN: ${{ vars.W3C_LOGIN }}
+          W3C_PASSWORD: ${{ secrets.W3C_PASSWORD }}

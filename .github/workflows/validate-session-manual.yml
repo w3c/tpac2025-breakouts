@@ -1,0 +1,37 @@
+name: "[M] Validate a session"
+
+on:
+  workflow_dispatch:
+    inputs:
+      sessionNumber:
+        description: 'Session issue number'
+        required: true
+        type: string
+
+jobs:
+  validate-session:
+    name: Validate session
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Checkout latest version of release script
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      # Note: no "package-lock.json" and no "npm ci" on purpose to retrieve
+      # latest version of w3c/tpac-breakouts tools (which are unversioned)
+      - name: Install dependencies
+        run: npm install
+
+      - name: Validate session and update project fields
+        run: npx tpac-breakouts validate ${{ inputs.sessionNumber }} --what everything
+        env:
+          # Same valid Personal Access Token (classic version) as above, with
+          # project and public_repo scope.
+          GRAPHQL_TOKEN: ${{ secrets.GRAPHQL_TOKEN }}
+          GH_TOKEN: ${{ secrets.GRAPHQL_TOKEN }}

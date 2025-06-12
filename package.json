@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "tpac-breakouts": "github:w3c/tpac-breakouts"
+  }
+}

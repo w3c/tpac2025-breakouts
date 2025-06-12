@@ -1,0 +1,60 @@
+name: "[M] Update W3C calendar"
+
+on:
+  workflow_dispatch:
+    inputs:
+      sessionNumber:
+        description: 'Session issue number or "all" to convert all valid sessions'
+        required: true
+        default: 'all'
+        type: string
+      calendarstatus:
+        description: 'Calendar entry status to use'
+        required: true
+        default: 'draft'
+        type: choice
+        options:
+          - draft
+          - tentative
+          - confirmed
+
+jobs:
+  update-calendar:
+    name: Update W3C calendar
+    runs-on: ubuntu-latest
+    steps:
+      # Starting with Ubuntu 23+, a security feature prevents running Puppeteer
+      # by default. It needs to be disabled. Using the "easiest" option, see:
+      # https://chromium.googlesource.com/chromium/src/+/main/docs/security/apparmor-userns-restrictions.md
+      # https://github.com/puppeteer/puppeteer/pull/13196/files
+      - name: Disable AppArmor
+        run: echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
+
+      - name: Setup node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Checkout latest version of release script
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      # Note: no "package-lock.json" and no "npm ci" on purpose to retrieve
+      # latest version of w3c/tpac-breakouts tools (which are unversioned)
+      - name: Install dependencies
+        run: npm install
+
+      - name: Convert session issues to calendar entries.
+        run: npx tpac-breakouts sync-calendar ${{ inputs.sessionNumber }} --status ${{ inputs.calendarstatus }}
+        env:
+          # A valid Personal Access Token (classic version) with project
+          # and public_repo scope.
+          GRAPHQL_TOKEN: ${{ secrets.GRAPHQL_TOKEN }}
+          GH_TOKEN: ${{ secrets.GRAPHQL_TOKEN }}
+
+          # Information about the team user on behalf of which the updates to
+          # the calendar will be made. The password must obviously be stored
+          # as a secret!
+          W3C_LOGIN: ${{ vars.W3C_LOGIN }}
+          W3C_PASSWORD: ${{ secrets.W3C_PASSWORD }}

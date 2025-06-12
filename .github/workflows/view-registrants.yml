@@ -1,0 +1,60 @@
+name: "[M] Refresh and view registrants"
+
+on:
+  workflow_dispatch:
+    inputs:
+      sessionNumber:
+        description: 'Session issue number or "all" to view/update all valid sessions'
+        required: true
+        default: 'all'
+        type: string
+
+jobs:
+  view-event:
+    name: Refresh and view number of registrants for the meetings
+    runs-on: ubuntu-latest
+    steps:
+      # Starting with Ubuntu 23+, a security feature prevents running Puppeteer
+      # by default. It needs to be disabled. Using the "easiest" option, see:
+      # https://chromium.googlesource.com/chromium/src/+/main/docs/security/apparmor-userns-restrictions.md
+      # https://github.com/puppeteer/puppeteer/pull/13196/files
+      - name: Disable AppArmor
+        run: echo 0 | sudo tee /proc/sys/kernel/apparmor_restrict_unprivileged_userns
+
+      - name: Setup node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Checkout latest version of release script
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      # Note: no "package-lock.json" and no "npm ci" on purpose to retrieve
+      # latest version of w3c/tpac-breakouts tools (which are unversioned)
+      - name: Install dependencies
+        run: npm install
+
+      - name: Create directory to store result
+        run: mkdir .registrants
+
+      - name: View/Update registrants
+        run: npx tpac-breakouts view-registrants ${{ inputs.sessionNumber }} --fetch --save > .registrants/index.md
+        env:
+          # Same valid Personal Access Token (classic version) as above, with
+          # project and public_repo scope.
+          GRAPHQL_TOKEN: ${{ secrets.GRAPHQL_TOKEN }}
+          GH_TOKEN: ${{ secrets.GRAPHQL_TOKEN }}
+
+          # Information about the team user on behalf of which the updates to
+          # the calendar will be made. The password must obviously be stored
+          # as a secret!
+          W3C_LOGIN: ${{ vars.W3C_LOGIN }}
+          W3C_PASSWORD: ${{ secrets.W3C_PASSWORD }}
+
+      - name: Create ZIP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: registrants
+          path: .registrants
