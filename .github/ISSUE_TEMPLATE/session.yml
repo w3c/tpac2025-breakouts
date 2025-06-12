@@ -82,20 +82,6 @@ body:
   - type: markdown
     attributes:
       value: |
-        ## Preferences
-
-  - type: textarea
-    id: conflicts
-    attributes:
-      label: Other sessions where we should avoid scheduling conflicts (Optional)
-      description: |
-        Identify sessions by their issue number in this GitHub repo (e.g., `#32, #18`). Please do not use links, just '#' followed by an issue number. Space- or comma-separated list. Note: When someone chairs 2 or more sessions, we automatically do not schedule those sessions in the same slots, so there is no need to note those conflicts there.
-    validations:
-      required: false
-
-  - type: markdown
-    attributes:
-      value: |
         ## Agenda
 
   - type: textarea
