@@ -5,7 +5,7 @@ The detailed breakouts schedule will be based on the proposals received and publ
 <!-- * [Calendar of breakout sessions](https://www.w3.org/calendar/tpac2025/breakout-sessions/). -->
 <!-- * [Grid of breakout sessions](https://www.w3.org/2025/11/TPAC/breakouts.html#grid). -->
 * [List of proposed sessions](../../issues). We welcome expressions of support (through emojis), questions, and other comments.
-* [Time slot schedule](https://github.com/w3c/tpac2025-breakouts/wiki/Breakout%E2%80%90time%E2%80%90slots). We have increased the number of slots and including slots on multiple days to help reduce schedule conflicts.
+* [Time slot schedule](https://github.com/w3c/tpac2025-breakouts/wiki/Breakout%E2%80%90time%E2%80%90slots). This year we have increased the number of slots and including slots on multiple days to help reduce schedule conflicts.
 * [Good Practices for Session Chairs](https://github.com/w3c/tpac-breakouts/wiki/Good-Practices-for-Session-Chairs), including instructions for proposing a breakout session, training for your session, and tips for running your session.
 * [Breakout policies](https://github.com/w3c/tpac-breakouts/wiki/Policies) regarding session scope, participation, and how the meeting planners optimize scheduling and room assignments.
 <!-- * In case you are making slides, consider using the [TPAC 2025 slide template in HTML](). -->
