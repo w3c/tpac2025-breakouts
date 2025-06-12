@@ -12,5 +12,5 @@ The detailed breakouts schedule will be based on the proposals received and publ
 
 ## Deadlines
 
-* 24 October, for sessions that will be scheduled in advance of TPAC.
+* 22 October, for sessions that will be scheduled in advance of TPAC.
 * 30 October noon local time, for sessions that arise during the course of TPAC discussions. These sessions will be scheduled in the Thursday afternoon [Time slot](https://github.com/w3c/tpac2025-breakouts/wiki/Breakout%E2%80%90time%E2%80%90slots).
