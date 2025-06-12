@@ -13,4 +13,4 @@ The detailed breakouts schedule will be based on the proposals received and publ
 ## Deadlines
 
 * **22 October**, for sessions that will be scheduled in advance of TPAC. Session proposals received before 22 October will be allocated to the breakout slots on Monday, Tuesday, and (mostly) Wednesday. We urge participants to propose breakout sessions by 22 October so that the meeting planners can work to resolve scheduling conflicts. On 3 November we expect to announce the breakout schedule for the first three days of the week.
-* *830 October** noon local time, for sessions proposed once TPAC is underway.  We will allocate those sessions to the Thursday afternoon breakout slot. We will allocate the sessions to that slot as we receive them. We do not expect to send a separate announcement of the Thursday breakout sessions.
+* **30 October** noon local time, for sessions proposed once TPAC is underway.  We will allocate those sessions to the Thursday afternoon breakout slot. We will allocate the sessions to that slot as we receive them. We do not expect to send a separate announcement of the Thursday breakout sessions.
