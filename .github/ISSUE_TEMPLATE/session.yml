@@ -75,7 +75,7 @@ body:
     attributes:
       label: IRC channel (Optional)
       description: |
-       A shortname for the webirc.w3.org channel (e.g., `#my-fav-session`) or a URL for a meeting discussion channel (e.g., Slack). If provided, this will be added to the calendar invitation.
+       A shortname for the webirc.w3.org channel (e.g., `#my-fav-session`) or a URL for the channel starting with https://webirc.w3.org/. If provided, this will be added to the calendar invitation. This is for IRC only; for Slack or other non-IRC information please use the session description instead.
     validations:
       required: false
 
